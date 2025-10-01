@@ -17,7 +17,7 @@ import firebase_admin
 from pyneuphonic import Neuphonic, TTSConfig
 from pyneuphonic.player import AudioPlayer
 
-client = Neuphonic(api_key='6fd9ed5d3158ba486953e510dc9dc03cf8915684f8b82d0e29128ec2c2cf19e3.58ffe10e-5c02-488e-a227-27c5608ada2a')
+# firebase key did exist here
 
 sse = client.tts.SSEClient()
 
@@ -32,7 +32,7 @@ tts_config = TTSConfig(
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 smile_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_smile.xml")
 
-# --------- SENTIMENT ANALYSIS ---------
+# Sentiment Analysis
 def analyze_sentiment(text):
     blob = TextBlob(text)
     sentiment_score = blob.sentiment.polarity
@@ -43,7 +43,7 @@ def analyze_sentiment(text):
     else:
         return "Neutral"
 
-# --------- DIAGNOSIS MODEL SETUP ---------
+# Diagnosis Model Setup
 @st.cache_resource
 def load_model_data():
     df, meta = arff.loadarff("cleaned_diagnosis_dataset.arff")
@@ -96,9 +96,9 @@ def suggest_more_symptoms(df, X, top_prognosis, user_symptoms, label_col='progno
                 symptom_counts[col] += 1
     return [symptom for symptom, _ in symptom_counts.most_common(5)]
 
-# --------- STREAMLIT TABS ---------
+# Streamlit Tabs
 def mental_health_tab():
-    st.header("🧠 Mental Health Check-In")
+    st.header("Mental Health Check-In")
     user_input = st.text_area("Write about how you're feeling today:")
     if st.button("Analyze Sentiment"):
         if user_input:
@@ -106,7 +106,7 @@ def mental_health_tab():
             st.subheader("Sentiment Analysis Result:")
             st.info(f"Detected Sentiment: **{sentiment}**")
             if sentiment == "Negative":
-                st.markdown("You have negative emotions, play this relaxing game to be happy 🙂")
+                st.markdown("You have negative emotions, play this relaxing game to be happy")
                 st.markdown(
                     """
                     <div style="width: 100%; display: flex; justify-content: center;">
@@ -139,7 +139,7 @@ def mental_health_tab():
             st.warning("Please write something first.")
 
 def symptom_checker_tab(model, label_encoder, features, accuracy, df, X):
-    st.header("🩺 Symptom Checker")
+    st.header("Symptom Checker")
     
     synonym_map, synonym_terms = load_synonym_map("symptom_synonyms_multilang_full.csv", "en")
 
@@ -172,10 +172,10 @@ def symptom_checker_tab(model, label_encoder, features, accuracy, df, X):
     st.session_state.selected_symptoms = selected_symptoms
 
     if selected_symptoms:
-        st.markdown("### Selected Symptoms:")
+        st.markdown("Selected Symptoms:")
         st.write(", ".join(selected_symptoms))
 
-        if st.button("🔄 Reset Symptoms"):
+        if st.button("Reset Symptoms"):
             st.session_state.selected_symptoms = set()
             selected_symptoms = set()
             st.rerun()
@@ -200,7 +200,7 @@ def symptom_checker_tab(model, label_encoder, features, accuracy, df, X):
             
             suggestions = suggest_more_symptoms(df, X, top_condition, selected_symptoms)
             if suggestions:
-                st.markdown("💡 You may also want to check for these symptoms:")
+                st.markdown("You may also want to check for these symptoms:")
                 st.write(", ".join(suggestions))
             st.caption(f"Model accuracy: {accuracy*100:.2f}%")
     else:
@@ -208,7 +208,7 @@ def symptom_checker_tab(model, label_encoder, features, accuracy, df, X):
 
 
 def facial_emotion_tab():
-    st.header("😊 Facial Emotion Recognition (Basic Geometry-Based)")
+    st.header("Facial Emotion Recognition (Basic Geometry-Based)")
     picture = st.camera_input("Take a photo")
 
     if picture is not None:
@@ -357,7 +357,7 @@ def main():
             st.success("You have been logged out. Redirecting to login page...")
             st.rerun()
         with st.sidebar:
-            st.markdown("Sponsored Ads 💸")
+            st.markdown("Sponsored Ads")
             
             ads = [
                 ("https://valyfy.com/", "https://media.licdn.com/dms/image/v2/D4E0BAQGQt7cO9SJY7Q/company-logo_200_200/company-logo_200_200/0/1702578949480/jigsawcareers_logo?e=2147483647&v=beta&t=vP-z6KmkG4VhggTKuOk-bdqWlQx0KrcBxsA2ETS6OUU"),
@@ -380,7 +380,7 @@ def main():
                                 unsafe_allow_html=True
                             )
             
-            st.markdown("Partners 🤝")
+            st.markdown("Partners")
 
             partners = [
                 ("https://linktr.ee/algosoc", "https://media.licdn.com/dms/image/v2/D4E0BAQE86vcSbw1MrQ/company-logo_200_200/company-logo_200_200/0/1726133446659?e=2147483647&v=beta&t=0eiz6pXNsLLiO7pfvMLlk6Jrz0IAQbEdHFSEN6HTDak"),
@@ -405,7 +405,7 @@ def main():
 
 
         model, le, features, acc, df, X, y = load_model_data()
-        tab1, tab2, tab3 = st.tabs(["🧠 Mental Health", "🩺 Symptom Checker", "😊 Facial Emotion"])
+        tab1, tab2, tab3 = st.tabs(["Mental Health", "Symptom Checker", "Facial Emotion"])
         with tab1:
             mental_health_tab()
         with tab2:
